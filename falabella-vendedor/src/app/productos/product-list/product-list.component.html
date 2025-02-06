@@ -1,0 +1,43 @@
+<div class="product-list">
+  <button *ngIf="!showForm" (click)="openForm()" class="add-product-btn">Nuevo Producto</button>
+
+  <table class="product-table" *ngIf="!showForm">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Stock</th>
+        <th>Imagen</th>
+        <th>Editar</th>
+        <th>Eliminar</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of products" class="product-row">
+        <td>{{ product.id }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.description }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.stock }}</td>
+        <td>
+          <img [src]="product.image || 'https://via.placeholder.com/50'" 
+               alt="{{ product.name }}" width="50">
+        </td>
+        <td>
+          <button (click)="openForm(product)" class="edit-btn">✏️ Editar</button>
+        </td>
+        <td>
+          <button (click)="deleteProduct(product.id)" class="delete-btn">🗑️ Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <app-product-form *ngIf="showForm" 
+    [product]="selectedProduct" 
+    (save)="addOrUpdateProduct($event)" 
+    (close)="closeForm()">
+  </app-product-form>
+</div>

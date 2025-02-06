@@ -1,0 +1,94 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: falabella
+      MYSQL_USER: falabella_user
+      MYSQL_PASSWORD: adri1103david
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - falabella_network
+
+  product-service:
+    build:
+      context: ./ProductService
+      dockerfile: Dockerfile
+    container_name: product_service
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./ProductService:/var/www
+    ports:
+      - "8001:8000"
+    depends_on:
+      - mysql
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: falabella
+      DB_USERNAME: falabella_user
+      DB_PASSWORD: adri1103david
+    networks:
+      - falabella_network
+
+  user-service:
+    build:
+      context: ./UserService
+      dockerfile: Dockerfile
+    container_name: user_service
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./UserService:/var/www
+    ports:
+      - "8002:8000"
+    depends_on:
+      - mysql
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: falabella
+      DB_USERNAME: falabella_user
+      DB_PASSWORD: adri1103david
+    networks:
+      - falabella_network
+
+  order-service:
+    build:
+      context: ./OrderService
+      dockerfile: Dockerfile
+    container_name: order_service
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./OrderService:/var/www
+    ports:
+      - "8003:8000"
+    depends_on:
+      - mysql
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: falabella
+      DB_USERNAME: falabella_user
+      DB_PASSWORD: adri1103david
+    networks:
+      - falabella_network
+
+networks:
+  falabella_network:
+    driver: bridge
+
+volumes:
+  mysql_data:

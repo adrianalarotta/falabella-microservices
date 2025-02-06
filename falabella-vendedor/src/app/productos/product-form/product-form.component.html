@@ -1,0 +1,26 @@
+<form (ngSubmit)="saveProduct()" class="product-form">
+  <div class="form-group">
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" [(ngModel)]="product.name" name="name" required>
+  </div>
+
+  <div class="form-group">
+    <label for="description">Descripción:</label>
+    <textarea id="description" [(ngModel)]="product.description" name="description"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="price">Precio:</label>
+    <input type="number" id="price" [(ngModel)]="product.price" name="price" required>
+  </div>
+
+  <div class="form-group">
+    <label for="stock">Stock:</label>
+    <input type="number" id="stock" [(ngModel)]="product.stock" name="stock" required>
+  </div>
+
+  <div class="form-buttons">
+    <button type="submit" class="submit-btn">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
+    <button type="button" (click)="close.emit()" class="cancel-btn">Cancelar</button>
+  </div>
+</form>
