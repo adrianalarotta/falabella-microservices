@@ -1,66 +1,60 @@
-import { Component, EventEmitter, Input, Output, OnInit} from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ProductService } from '../product.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms'; 
 
 @Component({
   selector: 'app-product-form',
-  standalone: true,
-  imports: [CommonModule, FormsModule], 
   templateUrl: './product-form.component.html',
-  styleUrls: ['./product-form.component.scss']
+  styleUrls: ['./product-form.component.scss'],
+  imports: [
+    ReactiveFormsModule, 
+  ],
 })
 export class ProductFormComponent implements OnInit {
-  @Input() product: any = null;
+  @Input() product: any = null;  // Recibe el producto si se está editando
   @Output() save = new EventEmitter<any>();
   @Output() close = new EventEmitter<void>();
 
-  isEditMode = false;
-
   productForm: FormGroup;
+  isEditMode: boolean = false;
+  apiUrl: string = 'http://localhost:8000/api/products';
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private http: HttpClient) {
     this.productForm = this.fb.group({
-      id: [''],
       name: ['', Validators.required],
-      description: ['', Validators.required],
       price: ['', Validators.required],
       stock: ['', Validators.required],
-      image: ['', Validators.required]
+      description: [''] // Puedes agregar más campos según necesites
     });
   }
 
   ngOnInit() {
-    if (!this.product) {
-      // Si product es null, inicializarlo con valores por defecto
-      this.product = {
-        id: null,
-        name: '',
-        description: '',
-        price: '',
-        stock: 0
-      };
+    if (this.product) {
+      this.productForm.patchValue(this.product);  // Rellenamos el formulario con los valores del producto
     }
-    this.isEditMode = this.product.id !== null; // Si tiene ID, es edición
   }
 
-  submitForm(): void {
+  saveProduct(): void {
     if (this.productForm.valid) {
-      console.log('Datos enviados:', this.productForm.value);
-      this.close.emit();
+      const productData = this.productForm.value;
+  
+      if (this.isEditMode) {
+        // Si estamos en modo edición, hacemos un `PUT`
+        this.http.put(`${this.apiUrl}/${this.product.id}`, productData).subscribe(response => {
+          console.log('Producto actualizado:', response);
+          this.save.emit(response);
+          this.close.emit();
+        });
+      } else {
+        // Si es un nuevo producto, usamos `POST`
+        this.http.post(this.apiUrl, productData).subscribe(response => {
+          console.log('Producto creado:', response);
+          this.save.emit(response);
+          this.close.emit();
+        });
+      }
     }
   }
-
- 
-
-  saveProduct() {
-    console.log('Nuevo producto agregado:', this.product);
-    this.save.emit(this.product);
-  }
-
-  closeForm(): void {
-    this.close.emit();
-  }
+  
 }

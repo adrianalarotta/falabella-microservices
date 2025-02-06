@@ -10,9 +10,6 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  getProducts(): Observable<any> {
-    return this.http.get(this.apiUrl);
-  }
 
   saveProduct(product: any): Observable<any> {
     const productData = {
@@ -21,7 +18,7 @@ export class ProductService {
       price: product.price,
       stock: product.stock,
       image: product.image || 'imagen.jpg',
-      user_id: 1 // Ajusta según sea necesario
+      user_id: 1 
     };
     return this.http.post(this.apiUrl, productData);
   }
@@ -30,18 +27,27 @@ export class ProductService {
     return this.http.post(this.apiUrl, productData);
   }
 
-  updateProduct(product: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${product.id}`, product);
-  }
+  
 
   getProductById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  addProduct(product: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, product);
+  getProducts(): Observable<any> {
+    return this.http.get(this.apiUrl);
   }
 
+  // Método para agregar un nuevo producto
+  addProduct(product: any): Observable<any> {
+    return this.http.post(this.apiUrl, product);
+  }
+
+  // Método para actualizar un producto existente
+  updateProduct(product: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${product.id}`, product);
+  }
+
+  // Método para eliminar un producto
   deleteProduct(productId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${productId}`);
   }
