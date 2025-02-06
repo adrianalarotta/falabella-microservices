@@ -32,6 +32,9 @@ class ProductController extends Controller
     // Crear un nuevo producto
     public function store(Request $request)
     {
+        $request->merge([
+            'user_id' => $request->input('user_id', 1),
+        ]);
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -72,6 +75,7 @@ class ProductController extends Controller
             'price' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
             'image' => 'nullable|string',
+            'user_id' => 'nullable|numeric',
         ]);
 
         $product->update($request->all());

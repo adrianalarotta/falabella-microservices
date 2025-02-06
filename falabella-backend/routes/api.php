@@ -21,10 +21,9 @@ use App\Http\Controllers\Services\UserService\UserController;
 use App\Http\Controllers\Services\OrderService\OrderController;
 
 // Rutas para ProductService
-Route::prefix('products')->group(function () {
-    Route::apiResource('', ProductController::class); 
-    Route::get('/user/{userId}', [ProductController::class, 'getUserData']); 
-});
+Route::apiResource('products', ProductController::class);
+Route::get('products/user/{userId}', [ProductController::class, 'getUserData']);
+
 
 
 // Rutas para UserService
